@@ -16,7 +16,7 @@
   \**********************/
 /***/ (() => {
 
-eval("\nconsole.log('hello there nigga');\n//# sourceURL=[module]\n//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiLi9zcmMvaW5kZXgudHMuanMiLCJtYXBwaW5ncyI6IkFBQWE7QUFDYiIsInNvdXJjZXMiOlsid2VicGFjazovL3RldHJpcy8uL3NyYy9pbmRleC50cz9lOTRlIl0sInNvdXJjZXNDb250ZW50IjpbIlwidXNlIHN0cmljdFwiO1xuY29uc29sZS5sb2coJ2hlbGxvIHRoZXJlIG5pZ2dhJyk7XG4iXSwibmFtZXMiOltdLCJzb3VyY2VSb290IjoiIn0=\n//# sourceURL=webpack-internal:///./src/index.ts\n");
+eval("\nfunction getCustomer(id) {\n    return id === 0 ? null : { birthday: new Date() };\n}\nlet customer = getCustomer(0);\nconsole.log(customer === null || customer === void 0 ? void 0 : customer.birthday);\n//# sourceURL=[module]\n//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiLi9zcmMvaW5kZXgudHMuanMiLCJtYXBwaW5ncyI6IkFBQWE7QUFDYjtBQUNBLCtCQUErQjtBQUMvQjtBQUNBO0FBQ0EiLCJzb3VyY2VzIjpbIndlYnBhY2s6Ly90ZXRyaXMvLi9zcmMvaW5kZXgudHM/ZTk0ZSJdLCJzb3VyY2VzQ29udGVudCI6WyJcInVzZSBzdHJpY3RcIjtcbmZ1bmN0aW9uIGdldEN1c3RvbWVyKGlkKSB7XG4gICAgcmV0dXJuIGlkID09PSAwID8gbnVsbCA6IHsgYmlydGhkYXk6IG5ldyBEYXRlKCkgfTtcbn1cbmxldCBjdXN0b21lciA9IGdldEN1c3RvbWVyKDApO1xuY29uc29sZS5sb2coY3VzdG9tZXIgPT09IG51bGwgfHwgY3VzdG9tZXIgPT09IHZvaWQgMCA/IHZvaWQgMCA6IGN1c3RvbWVyLmJpcnRoZGF5KTtcbiJdLCJuYW1lcyI6W10sInNvdXJjZVJvb3QiOiIifQ==\n//# sourceURL=webpack-internal:///./src/index.ts\n");
 
 /***/ })
 
