@@ -1,9 +1,12 @@
-/* body {
+body {
   text-align: center;
-  background: #fff;
+  background: #202028;
+  color: #fff;
+  font-family: sans-serif;
+  font-size: 2em;
 }
-#my-canvas {
-  background-color: #fff;
-  margin-left: 10px;
-  margin-top: 10px;
-} */
+
+#tetris {
+  border: solid 0.2em #fff;
+  height: 90vh;
+}

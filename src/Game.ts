@@ -1,6 +1,12 @@
 import Piece from './Piece';
 import Stack from './Stack';
-
+/* 
+  TODO:
+  -----
+  1. ghost piece, drop hinting
+  2. spacebar - hard drop
+  3. grid background
+*/
 class Game {
   private _canvas: HTMLCanvasElement;
   ctx: CanvasRenderingContext2D;
@@ -11,6 +17,7 @@ class Game {
   dropCounter: number;
   dropInterval: number;
   colors: string[];
+  score: number;
 
   constructor() {
     this._canvas = document.getElementById('tetris') as HTMLCanvasElement;
@@ -25,6 +32,8 @@ class Game {
       '#FFE138',
       '#3877FF',
     ];
+    this.score = 0;
+    this.updateScore(0);
     this.stack = new Stack();
     this.activePiece = new Piece(this.ctx, this.stack.stackMatrix);
     this.waitingPiece = new Piece(this.ctx, this.stack.stackMatrix);
@@ -44,10 +53,10 @@ class Game {
       this.activePiece = this.waitingPiece;
       this.waitingPiece = new Piece(this.ctx, this.stack.stackMatrix);
       this.activePiece.begin();
-      this.stack.removeLines();
-      console.table(this.stack.stackMatrix);
+      this.updateScore(this.stack.removeLines());
       if (this.activePiece.stackCollision()) {
         this.stack.gameOver();
+        this.updateScore(0);
       }
     }
     this.dropCounter = 0;
@@ -106,6 +115,11 @@ class Game {
     }
     this.draw();
     requestAnimationFrame(this.update.bind(this));
+  }
+  updateScore(newScore: number) {
+    this.score += newScore;
+    let score = document.getElementById('score')!;
+    score.innerText = this.score.toString();
   }
 }
 

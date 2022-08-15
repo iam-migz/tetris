@@ -1,14 +1,9 @@
-/*
-initialize: 
-  1. create a random piece                      
-  2. initialize the new position and matrix of the piece
-  3. make it initialize waiting
-  4. collisions
-  5. player movements 
-  6. draw based on position and matrix
-*/
 type PieceType = 'O' | 'I' | 'S' | 'Z' | 'L' | 'J' | 'T';
 
+/*
+  Fix: 
+    1. piece might go through another piece
+*/
 class Piece {
   waiting: boolean;
   offsetX: number;
