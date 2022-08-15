@@ -7,41 +7,22 @@ initialize:
   5. player movements 
   6. draw based on position and matrix
 */
-/*
-  TODO
-  --------------------
-  1. PieceType should be in constructor
-
-  Q. do i create a new instance of the Piece Object or keep the new one
-
-*/
 type PieceType = 'O' | 'I' | 'S' | 'Z' | 'L' | 'J' | 'T';
 
 class Piece {
   waiting: boolean;
   offsetX: number;
   offsetY: number;
-  pieceMatrix: boolean[][];
-  colors: string[];
+  pieceMatrix: number[][];
 
   constructor(
     public ctx: CanvasRenderingContext2D,
-    public stackMatrix: boolean[][]
+    public stackMatrix: number[][]
   ) {
     this.waiting = true;
     this.offsetX = 12 / 2 - 2;
     this.offsetY = 0;
     this.pieceMatrix = [];
-    this.colors = [
-      '',
-      '#FF0D72',
-      '#0DC2FF',
-      '#0DFF72',
-      '#F538FF',
-      '#FF8E0D',
-      '#FFE138',
-      '#3877FF',
-    ];
     this.getRandomPiece();
   }
   begin() {
@@ -73,7 +54,7 @@ class Piece {
     }
   }
   rotateRight() {
-    let tempMatrix: boolean[][] = [];
+    let tempMatrix: number[][] = [];
 
     // copy matrix
     for (let y = 0; y < this.pieceMatrix.length; y++) {
@@ -104,7 +85,7 @@ class Piece {
   leftWallCollision() {
     for (let y = 0; y < this.pieceMatrix.length; y++) {
       for (let x = 0; x < this.pieceMatrix[y].length; x++) {
-        if (this.pieceMatrix[y][x] === true) {
+        if (this.pieceMatrix[y][x] !== 0) {
           let realX = this.offsetX + x;
           if (realX < 0) {
             return true;
@@ -117,7 +98,7 @@ class Piece {
   rightWallCollision() {
     for (let y = 0; y < this.pieceMatrix.length; y++) {
       for (let x = 0; x < this.pieceMatrix[y].length; x++) {
-        if (this.pieceMatrix[y][x] === true) {
+        if (this.pieceMatrix[y][x] !== 0) {
           let realX = this.offsetX + x;
           let stackWidth = this.stackMatrix[0].length;
           if (realX >= stackWidth) {
@@ -132,7 +113,7 @@ class Piece {
     // returns true if we're in a collision with the bottom wall or the current stack
     for (let y = 0; y < this.pieceMatrix.length; y++) {
       for (let x = 0; x < this.pieceMatrix[y].length; x++) {
-        if (this.pieceMatrix[y][x] === true) {
+        if (this.pieceMatrix[y][x] !== 0) {
           let realx = this.offsetX + x;
           let realy = this.offsetY + y;
           // check if we are colliding with the bottom wall
@@ -141,7 +122,7 @@ class Piece {
             return true;
           }
           // check if we are colliding with the existing stack
-          if (this.stackMatrix[realy][realx] === true) {
+          if (this.stackMatrix[realy][realx] !== 0) {
             console.log('stack collision');
             return true;
           }
@@ -150,61 +131,50 @@ class Piece {
     }
     return false;
   }
-  createPiece(type: PieceType): boolean[][] {
+  createPiece(type: PieceType): number[][] {
     switch (type) {
       case 'T':
         return [
-          [false, false, false],
-          [true, true, true],
-          [false, true, false],
+          [0, 0, 0],
+          [1, 1, 1],
+          [0, 1, 0],
         ];
       case 'O':
         return [
-          [true, true],
-          [true, true],
+          [2, 2],
+          [2, 2],
         ];
       case 'L':
         return [
-          [false, true, false],
-          [false, true, false],
-          [false, true, true],
+          [0, 3, 0],
+          [0, 3, 0],
+          [0, 3, 3],
         ];
       case 'J':
         return [
-          [false, true, false],
-          [false, true, false],
-          [true, true, false],
+          [0, 4, 0],
+          [0, 4, 0],
+          [4, 4, 0],
         ];
       case 'I':
         return [
-          [false, true, false, false],
-          [false, true, false, false],
-          [false, true, false, false],
-          [false, true, false, false],
+          [0, 5, 0, 0],
+          [0, 5, 0, 0],
+          [0, 5, 0, 0],
+          [0, 5, 0, 0],
         ];
       case 'S':
         return [
-          [false, true, true],
-          [true, true, false],
-          [false, false, false],
+          [0, 6, 6],
+          [6, 6, 0],
+          [0, 0, 0],
         ];
       case 'Z':
         return [
-          [true, true, false],
-          [false, true, true],
-          [false, false, false],
+          [7, 7, 0],
+          [0, 7, 7],
+          [0, 0, 0],
         ];
-    }
-  }
-
-  drawPiece() {
-    for (let y = 0; y < this.pieceMatrix.length; y++) {
-      for (let x = 0; x < this.pieceMatrix[y].length; x++) {
-        if (this.pieceMatrix[y][x]) {
-          this.ctx.fillStyle = this.colors[y];
-          this.ctx.fillRect(x + this.offsetX, y + this.offsetY, 1, 1);
-        }
-      }
     }
   }
 }
