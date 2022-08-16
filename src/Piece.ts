@@ -1,19 +1,12 @@
 type PieceType = 'O' | 'I' | 'S' | 'Z' | 'L' | 'J' | 'T';
 
-/*
-  Fix: 
-    1. piece might go through another piece
-*/
 class Piece {
   waiting: boolean;
   offsetX: number;
   offsetY: number;
   pieceMatrix: number[][];
 
-  constructor(
-    public ctx: CanvasRenderingContext2D,
-    public stackMatrix: number[][]
-  ) {
+  constructor(public stackMatrix: number[][]) {
     this.waiting = true;
     this.offsetX = 12 / 2 - 2;
     this.offsetY = 0;
@@ -28,6 +21,10 @@ class Piece {
     const pieces: PieceType[] = ['O', 'I', 'S', 'Z', 'L', 'J', 'T'];
     this.pieceMatrix = this.createPiece(pieces[randomPieceIndex]);
   }
+  hardDrop(offsetY: number) {
+    this.offsetY = offsetY;
+    return true;
+  }
   softDrop(): boolean {
     this.offsetY++;
     if (this.stackCollision()) {
@@ -40,11 +37,19 @@ class Piece {
     this.offsetX++;
     if (this.rightWallCollision()) {
       this.offsetX--;
+      return;
+    }
+    if (this.stackCollision()) {
+      this.offsetX--;
     }
   }
   GoLeft() {
     this.offsetX--;
     if (this.leftWallCollision()) {
+      this.offsetX++;
+      return;
+    }
+    if (this.stackCollision()) {
       this.offsetX++;
     }
   }

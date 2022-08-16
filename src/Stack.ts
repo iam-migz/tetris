@@ -1,8 +1,3 @@
-/*
-  initialize:
-  1. store stackMatrix                                        DONE  
-  2. remove lines method, returns number of lines removed     Doing..
-*/
 class Stack {
   stackMatrix: number[][];
   constructor() {

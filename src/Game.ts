@@ -1,17 +1,12 @@
 import Piece from './Piece';
 import Stack from './Stack';
-/* 
-  TODO:
-  -----
-  1. ghost piece, drop hinting
-  2. spacebar - hard drop
-  3. grid background
-*/
+import ShadowPiece from './ShadowPiece';
 class Game {
   private _canvas: HTMLCanvasElement;
   ctx: CanvasRenderingContext2D;
   activePiece: Piece;
   waitingPiece: Piece;
+  shadowPiece: ShadowPiece;
   stack: Stack;
   lastTime: number;
   dropCounter: number;
@@ -35,8 +30,13 @@ class Game {
     this.score = 0;
     this.updateScore(0);
     this.stack = new Stack();
-    this.activePiece = new Piece(this.ctx, this.stack.stackMatrix);
-    this.waitingPiece = new Piece(this.ctx, this.stack.stackMatrix);
+    this.activePiece = new Piece(this.stack.stackMatrix);
+    this.shadowPiece = new ShadowPiece(
+      this.activePiece.pieceMatrix,
+      this.stack.stackMatrix,
+      this.ctx
+    );
+    this.waitingPiece = new Piece(this.stack.stackMatrix);
     this.activePiece.begin();
     console.log(this.activePiece.pieceMatrix);
     console.log(this.waitingPiece.pieceMatrix);
@@ -51,13 +51,15 @@ class Game {
     if (this.activePiece.softDrop()) {
       this.merge();
       this.activePiece = this.waitingPiece;
-      this.waitingPiece = new Piece(this.ctx, this.stack.stackMatrix);
+      this.waitingPiece = new Piece(this.stack.stackMatrix);
       this.activePiece.begin();
+      this.shadowPiece.pieceMatrix = [...this.activePiece.pieceMatrix];
       this.updateScore(this.stack.removeLines());
       if (this.activePiece.stackCollision()) {
         this.stack.gameOver();
         this.updateScore(0);
       }
+      this.shadowPiece.update(this.activePiece.offsetX);
     }
     this.dropCounter = 0;
   }
@@ -67,10 +69,16 @@ class Game {
         this.dropHandler();
       } else if (event.key === 'ArrowLeft') {
         this.activePiece.GoLeft();
+        this.shadowPiece.update(this.activePiece.offsetX);
       } else if (event.key === 'ArrowRight') {
         this.activePiece.GoRight();
+        this.shadowPiece.update(this.activePiece.offsetX);
       } else if (event.key === 'ArrowUp') {
         this.activePiece.rotateRight();
+        this.shadowPiece.update(this.activePiece.offsetX);
+      } else if (event.key === ' ') {
+        this.activePiece.hardDrop(this.shadowPiece.offsetY);
+        this.dropHandler();
       }
     });
   }
@@ -99,6 +107,8 @@ class Game {
   draw(): void {
     this.ctx.fillStyle = '#000';
     this.ctx.fillRect(0, 0, this._canvas.width, this._canvas.height);
+    this.shadowPiece.draw();
+
     this.drawMatrix(this.stack.stackMatrix);
     this.drawMatrix(
       this.activePiece.pieceMatrix,
