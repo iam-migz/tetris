@@ -56,8 +56,9 @@ class Game {
       this.shadowPiece.pieceMatrix = [...this.activePiece.pieceMatrix];
       this.updateScore(this.stack.removeLines());
       if (this.activePiece.stackCollision()) {
-        this.stack.gameOver();
+        this.score = 0;
         this.updateScore(0);
+        this.stack.gameOver();
       }
       this.shadowPiece.update(this.activePiece.offsetX);
     }
