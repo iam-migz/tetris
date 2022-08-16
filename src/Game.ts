@@ -2,8 +2,10 @@ import Piece from './Piece';
 import Stack from './Stack';
 import ShadowPiece from './ShadowPiece';
 class Game {
-  private _canvas: HTMLCanvasElement;
+  canvas: HTMLCanvasElement;
   ctx: CanvasRenderingContext2D;
+  nextPieceCanvas: HTMLCanvasElement;
+  nextPieceCtx: CanvasRenderingContext2D;
   activePiece: Piece;
   waitingPiece: Piece;
   shadowPiece: ShadowPiece;
@@ -15,9 +17,12 @@ class Game {
   score: number;
 
   constructor() {
-    this._canvas = document.getElementById('tetris') as HTMLCanvasElement;
-    this.ctx = this._canvas.getContext('2d')!;
+    this.canvas = document.getElementById('tetris') as HTMLCanvasElement;
+    this.ctx = this.canvas.getContext('2d')!;
+    this.nextPieceCanvas = document.getElementById('next') as HTMLCanvasElement;
+    this.nextPieceCtx = this.nextPieceCanvas.getContext('2d')!;
     this.ctx.scale(20, 20);
+    this.nextPieceCtx.scale(20, 20);
     this.colors = [
       '#FF0D72',
       '#0DC2FF',
@@ -106,8 +111,20 @@ class Game {
     }
   }
   draw(): void {
+    // tetris game black bg
     this.ctx.fillStyle = '#000';
-    this.ctx.fillRect(0, 0, this._canvas.width, this._canvas.height);
+    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+
+    // next piece black bg
+    this.nextPieceCtx.fillStyle = '#000';
+    this.nextPieceCtx.fillRect(
+      0,
+      0,
+      this.nextPieceCanvas.width,
+      this.nextPieceCanvas.height
+    );
+    this.drawNext();
+
     this.shadowPiece.draw();
 
     this.drawMatrix(this.stack.stackMatrix);
@@ -131,6 +148,17 @@ class Game {
     this.score += newScore;
     let score = document.getElementById('score')!;
     score.innerText = this.score.toString();
+  }
+  drawNext() {
+    for (let y = 0; y < this.waitingPiece.pieceMatrix.length; y++) {
+      for (let x = 0; x < this.waitingPiece.pieceMatrix[y].length; x++) {
+        if (this.waitingPiece.pieceMatrix[y][x] !== 0) {
+          this.nextPieceCtx.fillStyle =
+            this.colors[this.waitingPiece.pieceMatrix[y][x] - 1];
+          this.nextPieceCtx.fillRect(x + 2.5, y + 2, 1, 1);
+        }
+      }
+    }
   }
 }
 

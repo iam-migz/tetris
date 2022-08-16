@@ -1,12 +1,21 @@
 body {
-  text-align: center;
   background: #202028;
   color: #fff;
   font-family: sans-serif;
   font-size: 2em;
 }
+#container {
+  display: flex;
+  justify-content: center;
+}
 
 #tetris {
   border: solid 0.2em #fff;
   height: 90vh;
+}
+
+#next {
+  /* background: green; */
+  border: solid 0.2em #fff;
+  height: 20vh;
 }
