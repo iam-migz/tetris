@@ -4,10 +4,17 @@ import ShadowPiece from './ShadowPiece';
 class Game {
   canvas: HTMLCanvasElement;
   ctx: CanvasRenderingContext2D;
-  nextPieceCanvas: HTMLCanvasElement;
-  nextPieceCtx: CanvasRenderingContext2D;
+
+  waitingPieceCanvas: HTMLCanvasElement;
+  waitingPieceCtx: CanvasRenderingContext2D;
+
+  holdPieceCanvas: HTMLCanvasElement;
+  holdPieceCtx: CanvasRenderingContext2D;
+
   activePiece: Piece;
   waitingPiece: Piece;
+  holdPiece: Piece | null;
+
   shadowPiece: ShadowPiece;
   stack: Stack;
   lastTime: number;
@@ -19,10 +26,18 @@ class Game {
   constructor() {
     this.canvas = document.getElementById('tetris') as HTMLCanvasElement;
     this.ctx = this.canvas.getContext('2d')!;
-    this.nextPieceCanvas = document.getElementById('next') as HTMLCanvasElement;
-    this.nextPieceCtx = this.nextPieceCanvas.getContext('2d')!;
+
+    this.waitingPieceCanvas = document.getElementById(
+      'next'
+    ) as HTMLCanvasElement;
+    this.waitingPieceCtx = this.waitingPieceCanvas.getContext('2d')!;
+
+    this.holdPieceCanvas = document.getElementById('hold') as HTMLCanvasElement;
+    this.holdPieceCtx = this.holdPieceCanvas.getContext('2d')!;
+
     this.ctx.scale(20, 20);
-    this.nextPieceCtx.scale(20, 20);
+    this.waitingPieceCtx.scale(20, 20);
+    this.holdPieceCtx.scale(20, 20);
     this.colors = [
       '#FF0D72',
       '#0DC2FF',
@@ -36,15 +51,10 @@ class Game {
     this.updateScore(0);
     this.stack = new Stack();
     this.activePiece = new Piece(this.stack.stackMatrix);
-    this.shadowPiece = new ShadowPiece(
-      this.activePiece.pieceMatrix,
-      this.stack.stackMatrix,
-      this.ctx
-    );
+    this.shadowPiece = new ShadowPiece(this.activePiece, this.ctx);
     this.waitingPiece = new Piece(this.stack.stackMatrix);
+    this.holdPiece = null;
     this.activePiece.begin();
-    console.log(this.activePiece.pieceMatrix);
-    console.log(this.waitingPiece.pieceMatrix);
 
     this.setMovements();
     this.lastTime = 0;
@@ -58,7 +68,7 @@ class Game {
       this.activePiece = this.waitingPiece;
       this.waitingPiece = new Piece(this.stack.stackMatrix);
       this.activePiece.begin();
-      this.shadowPiece.pieceMatrix = [...this.activePiece.pieceMatrix];
+      this.shadowPiece.activePiece = this.activePiece;
       this.updateScore(this.stack.removeLines());
       if (this.activePiece.stackCollision()) {
         this.score = 0;
@@ -71,6 +81,7 @@ class Game {
   }
   setMovements(): void {
     document.addEventListener('keydown', (event) => {
+      console.log('event', event);
       if (event.key === 'ArrowDown') {
         this.dropHandler();
       } else if (event.key === 'ArrowLeft') {
@@ -85,6 +96,22 @@ class Game {
       } else if (event.key === ' ') {
         this.activePiece.hardDrop(this.shadowPiece.offsetY);
         this.dropHandler();
+      } else if (event.key === 'Shift') {
+        // can only shift 1 time
+        if (this.holdPiece === null) {
+          this.holdPiece = this.activePiece;
+          this.activePiece = this.waitingPiece;
+          this.waitingPiece = new Piece(this.stack.stackMatrix);
+          this.activePiece.begin();
+          this.shadowPiece.activePiece = this.activePiece;
+          this.shadowPiece.update(this.activePiece.offsetX);
+        } else {
+          let tempPiece = this.activePiece;
+          this.activePiece = this.holdPiece;
+          this.holdPiece = tempPiece;
+          this.shadowPiece.activePiece = this.activePiece;
+          this.shadowPiece.update(this.activePiece.offsetX);
+        }
       }
     });
   }
@@ -116,14 +143,26 @@ class Game {
     this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
     // next piece black bg
-    this.nextPieceCtx.fillStyle = '#000';
-    this.nextPieceCtx.fillRect(
+    this.waitingPieceCtx.fillStyle = '#000';
+    this.waitingPieceCtx.fillRect(
       0,
       0,
-      this.nextPieceCanvas.width,
-      this.nextPieceCanvas.height
+      this.waitingPieceCanvas.width,
+      this.waitingPieceCanvas.height
     );
-    this.drawNext();
+    this.drawSide(this.waitingPieceCtx, this.waitingPiece.pieceMatrix);
+
+    // hold piece black bg
+    this.holdPieceCtx.fillStyle = '#000';
+    this.holdPieceCtx.fillRect(
+      0,
+      0,
+      this.holdPieceCanvas.width,
+      this.holdPieceCanvas.height
+    );
+    if (this.holdPiece && this.holdPiece.pieceMatrix) {
+      this.drawSide(this.holdPieceCtx, this.holdPiece.pieceMatrix);
+    }
 
     this.shadowPiece.draw();
 
@@ -149,13 +188,12 @@ class Game {
     let score = document.getElementById('score')!;
     score.innerText = this.score.toString();
   }
-  drawNext() {
-    for (let y = 0; y < this.waitingPiece.pieceMatrix.length; y++) {
-      for (let x = 0; x < this.waitingPiece.pieceMatrix[y].length; x++) {
-        if (this.waitingPiece.pieceMatrix[y][x] !== 0) {
-          this.nextPieceCtx.fillStyle =
-            this.colors[this.waitingPiece.pieceMatrix[y][x] - 1];
-          this.nextPieceCtx.fillRect(x + 2.5, y + 2, 1, 1);
+  drawSide(ctx: CanvasRenderingContext2D, matrix: number[][]) {
+    for (let y = 0; y < matrix.length; y++) {
+      for (let x = 0; x < matrix[y].length; x++) {
+        if (matrix[y][x] !== 0) {
+          ctx.fillStyle = this.colors[matrix[y][x] - 1];
+          ctx.fillRect(x + 2.5, y + 2, 1, 1);
         }
       }
     }

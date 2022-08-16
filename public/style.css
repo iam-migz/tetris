@@ -8,14 +8,22 @@ body {
   display: flex;
   justify-content: center;
 }
+.side {
+  text-align: center;
+  margin: 1em;
+}
+.center {
+}
 
 #tetris {
   border: solid 0.2em #fff;
-  height: 90vh;
+  height: 70vh;
 }
-
 #next {
-  /* background: green; */
+  border: solid 0.2em #fff;
+  height: 20vh;
+}
+#hold {
   border: solid 0.2em #fff;
   height: 20vh;
 }

@@ -7,10 +7,19 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <div id="score"></div>
     <div id="container">
-      <canvas id="tetris" width="200" height="400"></canvas>
-      <canvas id="next" width="140" height="140"></canvas>
+      <div class="side">
+        <h2>Hold</h2>
+        <canvas id="hold" width="140" height="140"></canvas>
+      </div>
+      <div class="center">
+        <h2>Score: <span id="score"></span></h2>
+        <canvas id="tetris" width="200" height="400"></canvas>
+      </div>
+      <div class="side">
+        <h2>Next</h2>
+        <canvas id="next" width="140" height="140"></canvas>
+      </div>
     </div>
     <script src="bundle.js"></script>
     <script src="stats.min.js"></script>
