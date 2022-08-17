@@ -3,7 +3,7 @@ class Stack {
   constructor() {
     this.stackMatrix = this.createMatrix(10, 20);
   }
-  gameOver() {
+  emptyStack() {
     this.stackMatrix.forEach((row) => row.fill(0));
   }
   removeLines() {

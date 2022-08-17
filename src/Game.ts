@@ -10,13 +10,15 @@ class Game {
 
   holdPieceCanvas: HTMLCanvasElement;
   holdPieceCtx: CanvasRenderingContext2D;
+  isHolding: boolean;
+  isGamePaused: boolean;
 
+  stack: Stack;
   activePiece: Piece;
   waitingPiece: Piece;
   holdPiece: Piece | null;
-
   shadowPiece: ShadowPiece;
-  stack: Stack;
+
   lastTime: number;
   dropCounter: number;
   dropInterval: number;
@@ -34,18 +36,20 @@ class Game {
 
     this.holdPieceCanvas = document.getElementById('hold') as HTMLCanvasElement;
     this.holdPieceCtx = this.holdPieceCanvas.getContext('2d')!;
+    this.isHolding = false;
+    this.isGamePaused = false;
 
     this.ctx.scale(20, 20);
     this.waitingPieceCtx.scale(20, 20);
     this.holdPieceCtx.scale(20, 20);
     this.colors = [
-      '#FF0D72',
-      '#0DC2FF',
-      '#0DFF72',
-      '#F538FF',
-      '#FF8E0D',
-      '#FFE138',
-      '#3877FF',
+      'purple',
+      'yellow',
+      'orange',
+      'blue',
+      'cyan',
+      'green',
+      'red',
     ];
     this.score = 0;
     this.updateScore(0);
@@ -60,7 +64,7 @@ class Game {
     this.lastTime = 0;
     this.dropCounter = 0;
     this.dropInterval = 1000;
-    this.update();
+    this.animate();
   }
   dropHandler() {
     if (this.activePiece.softDrop()) {
@@ -71,17 +75,30 @@ class Game {
       this.shadowPiece.activePiece = this.activePiece;
       this.updateScore(this.stack.removeLines());
       if (this.activePiece.stackCollision()) {
-        this.score = 0;
-        this.updateScore(0);
-        this.stack.gameOver();
+        this.gameover();
       }
       this.shadowPiece.update(this.activePiece.offsetX);
+      this.isHolding = false;
     }
     this.dropCounter = 0;
   }
+  gameover() {
+    this.score = 0;
+    this.updateScore(0);
+    this.stack.emptyStack();
+    let menu = document.querySelector('#overlay') as HTMLElement;
+    let heading = menu.querySelector('#overlay-heading') as HTMLElement;
+    let playButton = document.querySelector('#play') as HTMLButtonElement;
+    this.toggleGamePause();
+    heading.innerText = 'Game Over :(';
+    menu.style.display = 'block';
+    playButton.innerText = 'play again';
+  }
   setMovements(): void {
     document.addEventListener('keydown', (event) => {
-      console.log('event', event);
+      if (this.isGamePaused === true && event.key !== 'Escape') {
+        return;
+      }
       if (event.key === 'ArrowDown') {
         this.dropHandler();
       } else if (event.key === 'ArrowLeft') {
@@ -97,23 +114,56 @@ class Game {
         this.activePiece.hardDrop(this.shadowPiece.offsetY);
         this.dropHandler();
       } else if (event.key === 'Shift') {
-        // can only shift 1 time
         if (this.holdPiece === null) {
           this.holdPiece = this.activePiece;
+          this.holdPiece.offsetY = 0;
+          this.holdPiece.offsetX = 12 / 2 - 2;
           this.activePiece = this.waitingPiece;
           this.waitingPiece = new Piece(this.stack.stackMatrix);
           this.activePiece.begin();
           this.shadowPiece.activePiece = this.activePiece;
           this.shadowPiece.update(this.activePiece.offsetX);
-        } else {
+          this.isHolding = true;
+        } else if (this.isHolding === false) {
           let tempPiece = this.activePiece;
           this.activePiece = this.holdPiece;
           this.holdPiece = tempPiece;
+          this.holdPiece.offsetY = 0;
+          this.holdPiece.offsetX = 12 / 2 - 2;
           this.shadowPiece.activePiece = this.activePiece;
           this.shadowPiece.update(this.activePiece.offsetX);
+          this.isHolding = true;
         }
+      } else if (event.key === 'Escape') {
+        this.toggleGamePause();
       }
     });
+    let playButton = document.querySelector('#play') as HTMLButtonElement;
+    let pauseButton = document.querySelector('#pause') as HTMLButtonElement;
+    playButton.addEventListener('click', (event: Event) => {
+      this.toggleGamePause();
+    });
+    pauseButton.addEventListener('click', (event: Event) => {
+      this.toggleGamePause();
+    });
+  }
+  toggleGamePause() {
+    let menu = document.querySelector('#overlay') as HTMLElement;
+    let heading = menu.querySelector('#overlay-heading') as HTMLElement;
+    let startButton = document.querySelector('#start') as HTMLButtonElement;
+    let playButton = document.querySelector('#play') as HTMLButtonElement;
+
+    if (this.isGamePaused === true) {
+      this.isGamePaused = false;
+      menu.style.display = 'none';
+      this.animate();
+    } else {
+      this.isGamePaused = true;
+      menu.style.display = 'block';
+      heading.innerText = 'Paused';
+      startButton.style.display = 'none';
+      playButton.style.display = 'block';
+    }
   }
   merge() {
     // merge stackMatrix & pieceMatrix
@@ -173,7 +223,8 @@ class Game {
       this.activePiece.offsetY
     );
   }
-  update(time = 0): void {
+  animate(time = 0): void {
+    if (this.isGamePaused === true) return;
     const deltaTime = time - this.lastTime;
     this.lastTime = time;
     this.dropCounter += deltaTime;
@@ -181,7 +232,7 @@ class Game {
       this.dropHandler();
     }
     this.draw();
-    requestAnimationFrame(this.update.bind(this));
+    requestAnimationFrame(this.animate.bind(this));
   }
   updateScore(newScore: number) {
     this.score += newScore;
