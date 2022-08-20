@@ -1,7 +1,25 @@
 import Piece from './Piece';
 import Stack from './Stack';
 import ShadowPiece from './ShadowPiece';
+import {
+  addDoc,
+  CollectionReference,
+  serverTimestamp,
+  Timestamp,
+  deleteDoc,
+  Firestore,
+  doc,
+} from 'firebase/firestore';
+import Menu from './Menu';
+type HighScoresType = {
+  id: string;
+  name: string;
+  score: number;
+  createdAt: Timestamp;
+};
 class Game {
+  menu: Menu;
+
   canvas: HTMLCanvasElement;
   ctx: CanvasRenderingContext2D;
 
@@ -25,7 +43,12 @@ class Game {
   colors: string[];
   score: number;
 
-  constructor() {
+  constructor(
+    public highscores: HighScoresType[],
+    public colRef: CollectionReference,
+    public db: Firestore
+  ) {
+    this.menu = new Menu();
     this.canvas = document.getElementById('tetris') as HTMLCanvasElement;
     this.ctx = this.canvas.getContext('2d')!;
 
@@ -52,7 +75,6 @@ class Game {
       'red',
     ];
     this.score = 0;
-    this.updateScore(0);
     this.stack = new Stack();
     this.activePiece = new Piece(this.stack.stackMatrix);
     this.shadowPiece = new ShadowPiece(this.activePiece, this.ctx);
@@ -60,7 +82,7 @@ class Game {
     this.holdPiece = null;
     this.activePiece.begin();
 
-    this.setMovements();
+    this.setEvents();
     this.lastTime = 0;
     this.dropCounter = 0;
     this.dropInterval = 1000;
@@ -82,19 +104,49 @@ class Game {
     }
     this.dropCounter = 0;
   }
-  gameover() {
-    this.score = 0;
-    this.updateScore(0);
-    this.stack.emptyStack();
-    let menu = document.querySelector('#overlay') as HTMLElement;
-    let heading = menu.querySelector('#overlay-heading') as HTMLElement;
-    let playButton = document.querySelector('#play') as HTMLButtonElement;
-    this.toggleGamePause();
-    heading.innerText = 'Game Over :(';
-    menu.style.display = 'block';
-    playButton.innerText = 'play again';
+  submitNewScore() {
+    const nameInput = document.querySelector('#name') as HTMLInputElement;
+    if (nameInput.value !== '') {
+      addDoc(this.colRef, {
+        name: nameInput.value,
+        score: this.score,
+        createdAt: serverTimestamp(),
+      })
+        .then(() => {
+          console.log('new item added');
+          const lastItem = this.highscores[this.highscores.length - 1];
+          if (this.highscores.length >= 10) {
+            const docRef = doc(this.db, 'highscores', lastItem.id);
+            deleteDoc(docRef)
+              .then(() => {
+                console.log('last item deleted');
+              })
+              .catch((err) => console.log(err));
+          }
+          this.menu.nameInput.style.display = 'none';
+          this.menu.submitScoreButton.style.display = 'none';
+        })
+        .catch((err) => console.log(err));
+    } else {
+      console.log('name input empty');
+    }
   }
-  setMovements(): void {
+  gameover() {
+    this.stack.emptyStack();
+    let headingText = 'Game Over';
+    let isHighScore = false;
+    let message = `You Scored ${this.score}`;
+    if (this.score > this.highscores[this.highscores.length - 1].score) {
+      headingText = 'Congrats! New HighScore';
+      isHighScore = true;
+      this.submitNewScore();
+    } else {
+      this.updateScore(-1);
+    }
+    this.toggleGamePause();
+    this.menu.gameOverMenu(isHighScore, headingText, message);
+  }
+  setEvents(): void {
     document.addEventListener('keydown', (event) => {
       if (this.isGamePaused === true && event.key !== 'Escape') {
         return;
@@ -114,6 +166,7 @@ class Game {
         this.activePiece.hardDrop(this.shadowPiece.offsetY);
         this.dropHandler();
       } else if (event.key === 'Shift') {
+        // improve this
         if (this.holdPiece === null) {
           this.holdPiece = this.activePiece;
           this.holdPiece.offsetY = 0;
@@ -136,33 +189,37 @@ class Game {
         }
       } else if (event.key === 'Escape') {
         this.toggleGamePause();
+        this.menu.pauseMenu(this.isGamePaused, 'Paused', 'Resume');
       }
     });
     let playButton = document.querySelector('#play') as HTMLButtonElement;
     let pauseButton = document.querySelector('#pause') as HTMLButtonElement;
+    let submitScoreButton = document.querySelector(
+      '#submitScore'
+    ) as HTMLButtonElement;
+    let restartButton = document.querySelector('#restart') as HTMLButtonElement;
     playButton.addEventListener('click', (event: Event) => {
       this.toggleGamePause();
+      this.menu.pauseMenu(this.isGamePaused, 'Paused', 'Resume');
     });
     pauseButton.addEventListener('click', (event: Event) => {
       this.toggleGamePause();
+      this.menu.pauseMenu(this.isGamePaused, 'Paused', 'Resume');
+    });
+    submitScoreButton.addEventListener('click', (event: Event) => {
+      this.submitNewScore();
+    });
+    restartButton.addEventListener('click', (event: Event) => {
+      this.stack.emptyStack();
+      this.updateScore(-1);
+      this.toggleGamePause();
+      this.menu.menu.style.display = 'none';
     });
   }
   toggleGamePause() {
-    let menu = document.querySelector('#overlay') as HTMLElement;
-    let heading = menu.querySelector('#overlay-heading') as HTMLElement;
-    let startButton = document.querySelector('#start') as HTMLButtonElement;
-    let playButton = document.querySelector('#play') as HTMLButtonElement;
-
-    if (this.isGamePaused === true) {
-      this.isGamePaused = false;
-      menu.style.display = 'none';
+    this.isGamePaused = !this.isGamePaused;
+    if (this.isGamePaused === false) {
       this.animate();
-    } else {
-      this.isGamePaused = true;
-      menu.style.display = 'block';
-      heading.innerText = 'Paused';
-      startButton.style.display = 'none';
-      playButton.style.display = 'block';
     }
   }
   merge() {
@@ -235,6 +292,10 @@ class Game {
     requestAnimationFrame(this.animate.bind(this));
   }
   updateScore(newScore: number) {
+    if (newScore === -1) {
+      this.score = 0;
+      return;
+    }
     this.score += newScore;
     let score = document.getElementById('score')!;
     score.innerText = this.score.toString();

@@ -4,7 +4,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>^_^</title>
-    <link rel="stylesheet" href="./public/style.css" />
+    <link rel="stylesheet" href="style.css" />
   </head>
   <body>
     <div id="container">
@@ -36,13 +36,20 @@
     <div id="overlay">
       <div id="overlay-content">
         <h2 id="overlay-heading"></h2>
+        <p id="message">Hey</p>
+        <input type="text" name="name" id="name" placeholder="Enter Your Name" required>
+        <button id="submitScore">Submit</button>
         <button id="start">Start Game</button>
         <button id="play">Resume</button>
         <button id="restart">Restart</button>
-
       </div>
     </div>
-    <script src="./public/bundle.js"></script>
+    <div id="highscores">
+      <h3>Top Scorers</h3>
+      <ul id="scores-list">
+      </ul>
+    </div>
+    <script src="bundle.js"></script>
     </script>
   </body>
 </html>
