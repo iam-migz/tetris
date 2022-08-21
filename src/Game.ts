@@ -11,12 +11,14 @@ import {
   doc,
 } from 'firebase/firestore';
 import Menu from './Menu';
+
 type HighScoresType = {
   id: string;
   name: string;
   score: number;
   createdAt: Timestamp;
 };
+
 class Game {
   menu: Menu;
 
@@ -74,7 +76,7 @@ class Game {
       'green',
       'red',
     ];
-    this.score = 0;
+    this.score = 7;
     this.stack = new Stack();
     this.activePiece = new Piece(this.stack.stackMatrix);
     this.shadowPiece = new ShadowPiece(this.activePiece, this.ctx);
@@ -104,48 +106,62 @@ class Game {
     }
     this.dropCounter = 0;
   }
-  submitNewScore() {
-    const nameInput = document.querySelector('#name') as HTMLInputElement;
-    if (nameInput.value !== '') {
-      addDoc(this.colRef, {
-        name: nameInput.value,
-        score: this.score,
-        createdAt: serverTimestamp(),
-      })
-        .then(() => {
-          console.log('new item added');
-          const lastItem = this.highscores[this.highscores.length - 1];
-          if (this.highscores.length >= 10) {
-            const docRef = doc(this.db, 'highscores', lastItem.id);
-            deleteDoc(docRef)
-              .then(() => {
-                console.log('last item deleted');
-              })
-              .catch((err) => console.log(err));
-          }
-          this.menu.nameInput.style.display = 'none';
-          this.menu.submitScoreButton.style.display = 'none';
-        })
-        .catch((err) => console.log(err));
-    } else {
-      console.log('name input empty');
-    }
-  }
   gameover() {
     this.stack.emptyStack();
     let headingText = 'Game Over';
     let isHighScore = false;
     let message = `You Scored ${this.score}`;
-    if (this.score > this.highscores[this.highscores.length - 1].score) {
+    if (
+      this.highscores.length === 0 ||
+      this.score > this.highscores[this.highscores.length - 1].score
+    ) {
       headingText = 'Congrats! New HighScore';
       isHighScore = true;
-      this.submitNewScore();
     } else {
       this.updateScore(-1);
     }
     this.toggleGamePause();
     this.menu.gameOverMenu(isHighScore, headingText, message);
   }
+  submitNewScore() {
+    const nameInput = document.querySelector('#name') as HTMLInputElement;
+    this.menu.message.style.color = 'red';
+
+    if (nameInput.value === '') {
+      this.menu.message.innerText = 'name input empty';
+      return;
+    } else if (nameInput.value.length <= 3) {
+      this.menu.message.innerText = 'name too small';
+      return;
+    } else if (nameInput.value.length > 10) {
+      this.menu.message.innerText = 'name too big';
+      return;
+    }
+    this.menu.message.style.color = 'white';
+    this.menu.message.style.display = 'none';
+
+    addDoc(this.colRef, {
+      name: nameInput.value,
+      score: this.score,
+      createdAt: serverTimestamp(),
+    })
+      .then(() => {
+        console.log('new item added');
+        const lastItem = this.highscores[this.highscores.length - 1];
+        if (this.highscores.length >= 10) {
+          const docRef = doc(this.db, 'highscores', lastItem.id);
+          deleteDoc(docRef)
+            .then(() => {
+              console.log('last item deleted');
+            })
+            .catch((err) => console.log(err));
+        }
+        this.menu.nameInput.style.display = 'none';
+        this.menu.submitScoreButton.style.display = 'none';
+      })
+      .catch((err) => console.log(err));
+  }
+
   setEvents(): void {
     document.addEventListener('keydown', (event) => {
       if (this.isGamePaused === true && event.key !== 'Escape') {

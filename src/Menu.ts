@@ -22,7 +22,7 @@ class Menu {
       '#restart'
     ) as HTMLButtonElement;
     this.nameInput = document.querySelector('#name') as HTMLInputElement;
-    this.message = document.querySelector('#name') as HTMLParagraphElement;
+    this.message = document.querySelector('#message') as HTMLParagraphElement;
   }
   pauseMenu(
     isGamePaused: boolean,
@@ -52,6 +52,9 @@ class Menu {
     if (isHighScore === true) {
       this.nameInput.style.display = 'block';
       this.submitScoreButton.style.display = 'block';
+    } else {
+      this.nameInput.style.display = 'none';
+      this.submitScoreButton.style.display = 'none';
     }
   }
 }

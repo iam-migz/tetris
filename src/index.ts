@@ -2,11 +2,7 @@ import { initializeApp } from 'firebase/app';
 import {
   getFirestore,
   collection,
-  addDoc,
-  deleteDoc,
-  doc,
   onSnapshot,
-  serverTimestamp,
   Timestamp,
   query,
   where,
@@ -55,9 +51,6 @@ onSnapshot(q, (snapshot) => {
     highscores.push({ id, name, score, createdAt });
   });
   scoresList.innerHTML = '';
-  console.log('highscores', highscores);
-  console.log('scoresList', scoresList);
-  // empty the ul children
   highscores.map((score, index) => {
     const li = document.createElement('li');
     let date: string | Date = new Date();
@@ -101,8 +94,7 @@ startButton.addEventListener('click', function (event: Event) {
 /*
 TODO
 --
-1. javascript date format librarry thingy
-2. make button bigger
-3. make score text font bigger
-4. display highscores at the upper right side
+1. how to have background in canvas
+2. make borders/margin on each block of tetris
+3. onpress vs onkeydown
 */
