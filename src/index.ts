@@ -9,7 +9,7 @@ import {
   orderBy,
   limit,
 } from 'firebase/firestore';
-import { formatDistance, subDays } from 'date-fns';
+import { formatDistance } from 'date-fns';
 import Game from './Game';
 
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
@@ -66,19 +66,6 @@ onSnapshot(q, (snapshot) => {
   });
 });
 
-// addDoc(colRef, {
-//   name: 'isabel',
-//   score: 500,
-//   createdAt: serverTimestamp(),
-// }).then(() => {
-//   console.log('new data added');
-// });
-
-// const docRef = doc(db, 'highscores', 'r5zp6ww6dgzsxjnEZZIR');
-// deleteDoc(docRef).then(() => {
-//   console.log('data deleted');
-// });
-
 let menu = document.querySelector('#overlay') as HTMLElement;
 let heading = menu.querySelector('#overlay-heading') as HTMLElement;
 let startButton = document.querySelector('#start') as HTMLButtonElement;
@@ -96,5 +83,4 @@ TODO
 --
 1. how to have background in canvas
 2. make borders/margin on each block of tetris
-3. onpress vs onkeydown
 */
