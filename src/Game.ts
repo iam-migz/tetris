@@ -11,13 +11,7 @@ import {
   doc,
 } from 'firebase/firestore';
 import Menu from './Menu';
-
-type HighScoresType = {
-  id: string;
-  name: string;
-  score: number;
-  createdAt: Timestamp;
-};
+import { HighScoresType } from './types';
 
 class Game {
   menu: Menu;

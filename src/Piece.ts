@@ -1,4 +1,4 @@
-type PieceType = 'O' | 'I' | 'S' | 'Z' | 'L' | 'J' | 'T';
+import { PieceType } from './types';
 
 class Piece {
   waiting: boolean;
