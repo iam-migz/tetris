@@ -89,7 +89,7 @@ class Game {
     this.dropCounter = 0;
   }
   async gameover() {
-    this.stack.emptyStack();
+    this.toggleGamePause();
     let headingText = 'Game Over';
     let isHighScore = false;
     let message = `You Scored ${this.score}`;
@@ -103,7 +103,7 @@ class Game {
     } else {
       this.updateScore(-1);
     }
-    this.toggleGamePause();
+    
     this.menu.gameOverMenu(isHighScore, headingText, message);
   }
   async submitNewScore() {
