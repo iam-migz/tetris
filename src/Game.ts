@@ -224,7 +224,9 @@ class Game {
       for (let x = 0; x < matrix[y].length; x++) {
         if (matrix[y][x] !== 0) {
           this.ctx.fillStyle = this.colors[matrix[y][x] - 1];
+          this.ctx.strokeStyle = 'black';
           this.ctx.fillRect(x + offsetX, y + offsetY, 1, 1);
+          this.ctx.strokeRect(x + offsetX, y + offsetY, 1, 1);
         }
       }
     }
