@@ -1,4 +1,4 @@
-import { PieceType } from './types';
+import { PieceType } from '../types';
 
 class Piece {
   waiting: boolean;

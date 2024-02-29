@@ -1,5 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore, collection, query, where, orderBy, limit, getDocs, CollectionReference, Firestore, addDoc, serverTimestamp, deleteDoc, doc } from "firebase/firestore";
+import { HighScoresType } from "../types";
 
 class DatabaseService {
     db: Firestore;
@@ -19,7 +20,7 @@ class DatabaseService {
         this.colRef = collection(this.db, "highscores");
     }
 
-    async fetchHighScores() {
+    async fetchHighScores(): Promise<HighScoresType[]> {
         try {
             const q = query(this.colRef, where("score", ">", 0), orderBy("score", "desc"), limit(10));
             const querySnapshot = await getDocs(q);

@@ -2,8 +2,8 @@ import Piece from './Piece';
 import Stack from './Stack';
 import ShadowPiece from './ShadowPiece';
 import Menu from './Menu';
-import DatabaseService from './DatabaseService';
 import * as Helpers from "./Helpers";
+import { databaseService } from '..';
 
 class Game {
   menu: Menu;
@@ -31,7 +31,7 @@ class Game {
   colors: string[];
   score: number;
 
-  constructor(public databaseService: DatabaseService) {
+  constructor() {
     this.menu = new Menu();
     this.canvas = document.getElementById('tetris') as HTMLCanvasElement;
     this.ctx = this.canvas.getContext('2d')!;
@@ -93,7 +93,7 @@ class Game {
     let headingText = 'Game Over';
     let isHighScore = false;
     let message = `You Scored ${this.score}`;
-    const highscores = await this.databaseService.fetchHighScores();
+    const highscores = await databaseService.fetchHighScores();
     if (
       highscores.length === 0 ||
       this.score > highscores[highscores.length - 1].score
@@ -123,8 +123,8 @@ class Game {
     this.menu.message.style.color = 'white';
     this.menu.message.style.display = 'none';
 
-    await this.databaseService.storeHighScore(nameInput.value, this.score);
-    this.databaseService.fetchHighScores().then((highscores) => {
+    await databaseService.storeHighScore(nameInput.value, this.score);
+    databaseService.fetchHighScores().then((highscores) => {
         Helpers.renderTopScores(highscores);
     });
     this.menu.nameInput.style.display = 'none';

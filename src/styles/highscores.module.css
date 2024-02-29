@@ -1,0 +1,16 @@
+.highscores {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: #80808030;
+  padding: 1em;
+  border-radius: 5px;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  -ms-border-radius: 5px;
+  -o-border-radius: 5px;
+}
+.highscores h3 {
+  text-align: center;
+  padding-bottom: 1em;
+}

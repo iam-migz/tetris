@@ -1,5 +1,5 @@
 import { formatDistance } from "date-fns";
-import { HighScoresType } from "./types";
+import { HighScoresType } from "../types";
 
 export function renderTopScores(highscores: HighScoresType[]) {
     const scoresList = document.getElementById("scores-list") as HTMLUListElement;
