@@ -10,8 +10,8 @@ class Menu {
   message: HTMLParagraphElement;
 
   constructor() {
-    this.menu = document.querySelector('#overlay') as HTMLElement;
-    this.heading = this.menu.querySelector('#overlay-heading') as HTMLElement;
+    this.menu = document.querySelector('#menu') as HTMLElement;
+    this.heading = document.querySelector('#heading') as HTMLElement;
     this.startButton = document.querySelector('#start') as HTMLButtonElement;
     this.playButton = document.querySelector('#play') as HTMLButtonElement;
     this.pauseButton = document.querySelector('#pause') as HTMLButtonElement;
