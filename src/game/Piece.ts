@@ -118,12 +118,10 @@ class Piece {
           let realy = this.offsetY + y;
           // check if we are colliding with the bottom wall
           if (realy >= this.stackMatrix.length) {
-            console.log('wall collision');
             return true;
           }
           // check if we are colliding with the existing stack
           if (this.stackMatrix[realy][realx] !== 0) {
-            console.log('stack collision');
             return true;
           }
         }

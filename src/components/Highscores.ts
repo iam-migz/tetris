@@ -14,7 +14,7 @@ export const renderTopScores = async (parent?: HTMLElement) => {
         const date = formatDistance(score.createdAt.toDate(), new Date(), {
                 addSuffix: true,
             });
-        li.innerHTML = `${index + 1}. ${score.name}: ${score.score} <span class="date">${date}</span>`;
+        li.innerHTML = `${index + 1}. ${score.name}: ${score.score} <span class="${s.date}">${date}</span>`;
         scoresList.appendChild(li);
     });
 }

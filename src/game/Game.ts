@@ -1,13 +1,11 @@
 import Piece from './Piece';
 import Stack from './Stack';
 import ShadowPiece from './ShadowPiece';
-import Menu from './Menu';
-import * as Helpers from "./Helpers";
 import { databaseService } from '..';
+import { gameOverMenu, pauseMenu, submitNewScore } from '../components/Menu';
+import { get } from '../helpers';
 
 class Game {
-  menu: Menu;
-
   canvas: HTMLCanvasElement;
   ctx: CanvasRenderingContext2D;
 
@@ -32,16 +30,13 @@ class Game {
   score: number;
 
   constructor() {
-    this.menu = new Menu();
-    this.canvas = document.getElementById('tetris') as HTMLCanvasElement;
+    this.canvas = get<HTMLCanvasElement>("#tetris");
     this.ctx = this.canvas.getContext('2d')!;
 
-    this.waitingPieceCanvas = document.getElementById(
-      'next'
-    ) as HTMLCanvasElement;
+    this.waitingPieceCanvas = get<HTMLCanvasElement>("#next");
     this.waitingPieceCtx = this.waitingPieceCanvas.getContext('2d')!;
 
-    this.holdPieceCanvas = document.getElementById('hold') as HTMLCanvasElement;
+    this.holdPieceCanvas = get<HTMLCanvasElement>('#hold')
     this.holdPieceCtx = this.holdPieceCanvas.getContext('2d')!;
     this.isHolding = false;
     this.isGamePaused = false;
@@ -58,7 +53,7 @@ class Game {
       'green',
       'red',
     ];
-    this.score = 7;
+    this.score = 0;
     this.stack = new Stack();
     this.activePiece = new Piece(this.stack.stackMatrix);
     this.shadowPiece = new ShadowPiece(this.activePiece, this.ctx);
@@ -104,31 +99,7 @@ class Game {
       this.updateScore(-1);
     }
     
-    this.menu.gameOverMenu(isHighScore, headingText, message);
-  }
-  async submitNewScore() {
-    const nameInput = document.querySelector('#name') as HTMLInputElement;
-    this.menu.message.style.color = 'red';
-
-    if (nameInput.value === '') {
-      this.menu.message.innerText = 'name input empty';
-      return;
-    } else if (nameInput.value.length <= 3) {
-      this.menu.message.innerText = 'name too small';
-      return;
-    } else if (nameInput.value.length > 10) {
-      this.menu.message.innerText = 'name too big';
-      return;
-    }
-    this.menu.message.style.color = 'white';
-    this.menu.message.style.display = 'none';
-
-    await databaseService.storeHighScore(nameInput.value, this.score);
-    databaseService.fetchHighScores().then((highscores) => {
-        Helpers.renderTopScores(highscores);
-    });
-    this.menu.nameInput.style.display = 'none';
-    this.menu.submitScoreButton.style.display = 'none';
+    gameOverMenu(isHighScore, headingText, message);
   }
 
   setEvents(): void {
@@ -151,7 +122,6 @@ class Game {
         this.activePiece.hardDrop(this.shadowPiece.offsetY);
         this.dropHandler();
       } else if (event.key === 'Shift') {
-        // improve this
         if (this.holdPiece === null) {
           this.holdPiece = this.activePiece;
           this.holdPiece.offsetY = 0;
@@ -174,31 +144,31 @@ class Game {
         }
       } else if (event.key === 'Escape') {
         this.toggleGamePause();
-        this.menu.pauseMenu(this.isGamePaused, 'Paused', 'Resume');
+        pauseMenu(this.isGamePaused);
       }
     });
-    let playButton = document.querySelector('#play') as HTMLButtonElement;
-    let pauseButton = document.querySelector('#pause') as HTMLButtonElement;
-    let submitScoreButton = document.querySelector(
-      '#submitScore'
-    ) as HTMLButtonElement;
-    let restartButton = document.querySelector('#restart') as HTMLButtonElement;
-    playButton.addEventListener('click', (event: Event) => {
+
+    let playButton = get("#play");
+    let pauseButton = get("#pause");
+    let submitScoreButton = get("#submitScore");
+    let restartButton = get("#restart");
+
+    playButton.addEventListener('click', () => {
       this.toggleGamePause();
-      this.menu.pauseMenu(this.isGamePaused, 'Paused', 'Resume');
+      pauseMenu(this.isGamePaused);
     });
-    pauseButton.addEventListener('click', (event: Event) => {
+    pauseButton.addEventListener('click', () => {
       this.toggleGamePause();
-      this.menu.pauseMenu(this.isGamePaused, 'Paused', 'Resume');
+      pauseMenu(this.isGamePaused);
     });
-    submitScoreButton.addEventListener('click', (event: Event) => {
-      this.submitNewScore();
+    submitScoreButton.addEventListener('click', () => {
+      submitNewScore(this.score);
     });
-    restartButton.addEventListener('click', (event: Event) => {
+    restartButton.addEventListener('click', () => {
       this.stack.emptyStack();
       this.updateScore(-1);
       this.toggleGamePause();
-      this.menu.menu.style.display = 'none';
+      get('#menu').style.display = 'none';
     });
   }
   toggleGamePause() {
@@ -284,8 +254,7 @@ class Game {
       return;
     }
     this.score += newScore;
-    let score = document.getElementById('score')!;
-    score.innerText = this.score.toString();
+    get("#score").innerText = this.score.toString();
   }
   drawSide(ctx: CanvasRenderingContext2D, matrix: number[][]) {
     for (let y = 0; y < matrix.length; y++) {

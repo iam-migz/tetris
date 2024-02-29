@@ -47,7 +47,6 @@ class DatabaseService {
                 const lastItem = highscores[highscores.length - 1];
                 const docRef = doc(this.db, "highscores", lastItem.id);
                 await deleteDoc(docRef);
-                console.log("Last item deleted");
             }
         } catch (error) {
             console.error("Error:", error);
