@@ -1,0 +1,28 @@
+* {
+	margin: 0;
+	padding: 0;
+}
+
+canvas {
+	border-radius: 5px;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	-ms-border-radius: 5px;
+	-o-border-radius: 5px;
+}
+
+body {
+	background: #202028;
+	color: #fff;
+	font-family: sans-serif;
+}
+
+li {
+	list-style-type: none;
+}
+
+svg {
+	width: 40px;
+	fill: gray;
+	cursor: pointer;
+}

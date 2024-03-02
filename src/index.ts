@@ -1,21 +1,8 @@
-import Game from "./Game";
-import DatabaseService from "./DatabaseService";
-import * as Helpers from "./Helpers";
+import Home from './pages/Home';
+import { create } from './helpers';
+import DatabaseService from "./game/DatabaseService";
 
-const databaseService = new DatabaseService();
+export const databaseService = new DatabaseService()
 
-databaseService.fetchHighScores().then((highscores) => {
-    Helpers.renderTopScores(highscores);
-});
-
-let menu = document.querySelector("#overlay") as HTMLElement;
-let heading = menu.querySelector("#overlay-heading") as HTMLElement;
-let startButton = document.querySelector("#start") as HTMLButtonElement;
-
-heading.innerText = "Tetris";
-startButton.style.display = "block";
-
-startButton.addEventListener("click", async function (event: Event) {
-    menu.style.display = "none";
-    new Game(databaseService);
-});
+document.body.appendChild(create('div', { id: 'root' }))
+Home()
