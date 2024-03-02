@@ -1,5 +1,5 @@
 {
-    "editor.tabSize": 4,
+    "editor.tabSize": 2,
     "editor.detectIndentation": false,
     "[typescript]": {
         "editor.tabSize": 2
@@ -10,5 +10,5 @@
 	"[html]": {
         "editor.tabSize": 4
     },
-    "editor.insertSpaces": false
+    "editor.insertSpaces": true
 }

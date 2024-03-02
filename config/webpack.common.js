@@ -4,7 +4,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 module.exports = {
   entry: path.resolve(__dirname, '..', 'src', 'index.ts'),
   output: {
-    filename: 'bundle.js',
+    filename: 'bundle.[contenthash].js',
     path: path.resolve(__dirname, '..', 'dist'),
 	clean: true
   },
@@ -27,6 +27,7 @@ module.exports = {
   },
   plugins: [
     new HtmlWebpackPlugin({
+      filename: 'index.[contenthash].html',
       title: 'Tetris',
       favicon: path.resolve(__dirname, '..', 'public', 'favicon.png'),
     })

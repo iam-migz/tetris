@@ -1,4 +1,3 @@
-import Game from "./game/Game";
 import Home from './pages/Home';
 import { create } from './helpers';
 import DatabaseService from "./game/DatabaseService";
