@@ -1,10 +1,10 @@
-import { create } from '../helpers';
+import { create } from '../utils';
 import s from '../styles/canvas.module.css';
 
 export default function Canvas() {
-	const render = () => {
-		const canvas = create('div', { 'className': s.container })
-		canvas.innerHTML = /*HTML*/`
+  const render = () => {
+    const canvas = create('div', { className: s.container });
+    canvas.innerHTML = /* HTML */`
 			<div class="${s.side}">
 				<div>
 					<h2>Hold</h2>
@@ -32,8 +32,8 @@ export default function Canvas() {
 				</div>
 			</div>
 		`;
-		return canvas;
-	}
+    return canvas;
+  };
 
-	return render();
+  return render();
 }

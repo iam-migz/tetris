@@ -5,17 +5,20 @@
   "main": "index.js",
   "scripts": {
     "serve": "webpack-dev-server --open --config ./config/webpack.dev.js",
-    "build-dev": "webpack --config ./config/webpack.dev.js",
-    "build-prod": "webpack --config ./config/webpack.prod.js",
-    "lint": "tsc && eslint ./src --ext .ts",
-    "lint:fix": "eslint . --fix"
+    "build:dev": "webpack --config ./config/webpack.dev.js",
+    "build:prod": "webpack --config ./config/webpack.prod.js",
+    "lint": "eslint ./src --ext .ts",
+    "lint:fix": "eslint ./src --ext .ts --fix"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^7.1.0",
+    "@typescript-eslint/parser": "^7.1.0",
     "css-loader": "^6.10.0",
     "eslint": "^8.57.0",
+    "eslint-config-airbnb-typescript": "^18.0.0",
     "html-webpack-plugin": "^5.6.0",
     "style-loader": "^3.3.4",
     "ts-loader": "^9.3.1",
