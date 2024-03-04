@@ -15,7 +15,7 @@ class Piece {
     this.offsetY = 0;
     this.pieceMatrix = [];
     this.pieces = ['O', 'I', 'S', 'Z', 'L', 'J', 'T'];
-    this.createRandomPiece();
+    this.pieceMatrix = this.createRandomPiece();
   }
 
   begin() {

@@ -52,7 +52,7 @@ class Game {
     this.holdPieceCanvas = get<HTMLCanvasElement>('#hold');
     this.holdPieceCtx = this.holdPieceCanvas.getContext('2d')!;
     this.isHolding = false;
-    this.isGamePaused = false;
+    this.isGamePaused = true;
 
     this.ctx.scale(20, 20);
     this.waitingPieceCtx.scale(20, 20);
@@ -72,12 +72,12 @@ class Game {
     this.shadowPiece = new ShadowPiece(this.activePiece, this.ctx);
     this.waitingPiece = new Piece(this.stack.stackMatrix);
     this.holdPiece = null;
-    this.activePiece.begin();
-
-    this.setEvents();
     this.lastTime = 0;
     this.dropCounter = 0;
     this.dropInterval = 1000;
+
+    this.activePiece.begin();
+    this.setEvents();
     this.animate();
   }
 

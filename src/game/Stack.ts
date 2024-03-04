@@ -1,10 +1,17 @@
+/**
+ * the stack of tetris pieces made by player
+ */
 class Stack {
   stackMatrix: number[][];
 
   constructor() {
-    // Matrix(x: 10, y: 20)
-    this.stackMatrix = Array.from({ length: 10 }, () => new Array(20).fill(0));
+    this.stackMatrix = [];
+    this.createMatrix(20, 10);
   }
+
+  createMatrix = (rows: number, cols: number) => {
+    this.stackMatrix = Array.from({ length: rows }, () => new Array(cols));
+  };
 
   emptyStack() {
     this.stackMatrix.forEach((row) => row.fill(0));
@@ -22,7 +29,7 @@ class Stack {
         }
       }
       if (lineComplete === true) {
-        // shift everything down starting from index y to cover a single completed line
+        // shift everything down starting from index y to remove completed lines
         removedCount += 1;
         for (let i = y; i > 0; i -= 1) {
           this.stackMatrix[i] = [...this.stackMatrix[i - 1]];
