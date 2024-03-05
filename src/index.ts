@@ -1,5 +1,5 @@
-import { create, get } from './utils';
 import './styles/index.module.css';
+import { create, get } from './utils';
 import Canvas from './components/Canvas';
 import Highscores from './components/Highscores';
 import Menu from './components/Menu';
@@ -11,11 +11,11 @@ root.appendChild(Canvas());
 root.appendChild(Highscores());
 root.appendChild(Menu());
 
-const game = new Game();
+const game = new Game()
 const start = get('#start');
 const menu = get('#menu');
 
 start.addEventListener('click', () => {
   menu.style.display = 'none';
-  game.toggleGamePause();
+  game.animate();
 });
