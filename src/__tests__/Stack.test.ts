@@ -1,6 +1,5 @@
 import Piece from '../game/Piece';
 import Stack from '../game/Stack';
-import { PIECE_TYPE, tetrisPiece } from '../utils';
 
 describe('Stack', () => {
   let stack: Stack;
@@ -45,12 +44,4 @@ describe('Stack', () => {
     ]);
     expect(removedCount).toBe(1);
   });
-
-  test('stack merge should ', () => {
-    const piece = new Piece();
-    piece.matrix = tetrisPiece[PIECE_TYPE.O];
-    stack.matrix[stack.matrix.length-1].fill(1);
-    
-  });
-  
 });

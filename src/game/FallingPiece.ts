@@ -1,4 +1,3 @@
-import { PIECE_TYPE, tetrisPiece } from '../utils';
 import Piece from './Piece';
 import Stack from './Stack';
 
@@ -6,10 +5,13 @@ import Stack from './Stack';
  * Falling Piece
  */
 class FallingPiece extends Piece {
-
+  offsetY: number;
+  offsetX: number;
   constructor(public stack: Stack) {
     super();
-    this.createRandomPiece();
+    this.offsetY = 0;
+    this.offsetX = 12 / 2 - 2;
+    this.updatePiece(Piece.createRandomPiece());
   }
 
   hardDrop(offsetY: number) {
@@ -23,7 +25,7 @@ class FallingPiece extends Piece {
    */
   softDrop(): boolean {
     this.offsetY += 1;
-    if (this.stack.stackCollision(this)) {
+    if (this.stack.stackCollision(this.matrix, this.offsetY, this.offsetX)) {
       this.offsetY -= 1;
       return true;
     }
@@ -36,7 +38,7 @@ class FallingPiece extends Piece {
       this.offsetX -= 1;
       return;
     }
-    if (this.stack.stackCollision(this)) {
+    if (this.stack.stackCollision(this.matrix, this.offsetY, this.offsetX)) {
       this.offsetX -= 1;
     }
   }
@@ -47,7 +49,7 @@ class FallingPiece extends Piece {
       this.offsetX += 1;
       return;
     }
-    if (this.stack.stackCollision(this)) {
+    if (this.stack.stackCollision(this.matrix, this.offsetY, this.offsetX)) {
       this.offsetX += 1;
     }
   }
@@ -74,7 +76,7 @@ class FallingPiece extends Piece {
     while (this.rightWallCollision()) {
       this.offsetX -= 1;
     }
-    if (this.stack.stackCollision(this)) {
+    if (this.stack.stackCollision(this.matrix, this.offsetY, this.offsetX)) {
       // revert
       for (let y = 0; y < this.matrix.length; y += 1) {
         this.matrix[y] = [...tempMatrix[y]];
@@ -111,11 +113,16 @@ class FallingPiece extends Piece {
     return false;
   }
 
-  createRandomPiece() {
-    const TETRIS_PIECES = Object.values(PIECE_TYPE);
-    const random = Math.round(Math.random() * (TETRIS_PIECES.length-1));
-    this.matrix = tetrisPiece[TETRIS_PIECES[random]]
+  /**
+   * 
+   * method override
+   */
+  updatePiece(piece: Piece) {
+    super.updatePiece(piece);
+    this.offsetY = 0;
+    this.offsetX = 12 / 2 - 2;
   }
+
 }
 
 export default FallingPiece;

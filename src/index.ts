@@ -11,7 +11,7 @@ root.appendChild(Canvas());
 root.appendChild(Highscores());
 root.appendChild(Menu());
 
-const game = new Game()
+const game = new Game();
 const start = get('#start');
 const menu = get('#menu');
 

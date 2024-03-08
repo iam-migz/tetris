@@ -1,4 +1,4 @@
-import Piece from "./Piece";
+import FallingPiece from './FallingPiece';
 
 /**
  * the stack of tetris pieces made by player
@@ -45,23 +45,22 @@ class Stack {
   }
 
   // returns true if we're in a collision with the bottom wall or the current stack
-  stackCollision(piece: Piece) {
-    for (let y = 0; y < piece.matrix.length; y += 1) {
-      for (let x = 0; x < piece.matrix[y].length; x += 1) {
-        if (piece.matrix[y][x] !== 0) {
-          const realx = piece.offsetX + x;
-          const realy = piece.offsetY + y;
-          
+  stackCollision(matrix: number[][], offsetY: number, offsetX: number) {
+    for (let y = 0; y < matrix.length; y += 1) {
+      for (let x = 0; x < matrix[y].length; x += 1) {
+        if (matrix[y][x] !== 0) {
+          const realx = offsetX + x;
+          const realy = offsetY + y;
+
           // check if we are colliding with the bottom wall
           if (realy >= this.matrix.length) {
             return true;
           }
-          
+
           // check if we are colliding with the existing stack
           if (this.matrix[realy][realx] !== 0) {
             return true;
           }
-          
         }
       }
     }
@@ -69,18 +68,17 @@ class Stack {
   }
 
   // merge stackMatrix & pieceMatrix
-  merge(activePiece: Piece) {
+  merge(activePiece: FallingPiece) {
     const { matrix, offsetY, offsetX } = activePiece;
 
     for (let y = 0; y < matrix.length; y += 1) {
       for (let x = 0; x < matrix[y].length; x += 1) {
-        if (y+offsetY < this.matrix.length && matrix[y][x] !== 0) {
+        if (y + offsetY < this.matrix.length && matrix[y][x] !== 0) {
           this.matrix[y + offsetY][x + offsetX] = matrix[y][x];
         }
       }
     }
   }
-
 }
 
 export default Stack;

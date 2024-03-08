@@ -20,6 +20,7 @@
     "@babel/preset-typescript": "^7.23.3",
     "@jest/globals": "^29.7.0",
     "@types/jest": "^29.5.12",
+    "@types/lodash": "^4.14.202",
     "@typescript-eslint/eslint-plugin": "^7.1.0",
     "@typescript-eslint/parser": "^7.1.0",
     "babel-jest": "^29.7.0",
@@ -38,6 +39,7 @@
   },
   "dependencies": {
     "date-fns": "^2.29.2",
-    "firebase": "^9.9.2"
+    "firebase": "^9.9.2",
+    "lodash": "^4.17.21"
   }
 }
