@@ -1,4 +1,4 @@
-import { PieceType } from "./constants";
+import { PieceType } from './constants';
 
 export const get = <T extends HTMLElement>(
   query: string,
@@ -55,6 +55,19 @@ export const createPieceMatrix = (type: PieceType): number[][] => {
         [0, 0, 0],
       ];
     default:
-      return []
+      return [];
   }
-}
+};
+
+export const iterMatrix = (
+  matrix: number[][],
+  callback: (y: number, x: number) => void,
+) => {
+  for (let y = 0; y < matrix.length; y += 1) {
+    for (let x = 0; x < matrix[y].length; x += 1) {
+      if (matrix[y][x] !== 0) {
+        callback(y, x);
+      }
+    }
+  }
+};

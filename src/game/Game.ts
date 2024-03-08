@@ -1,12 +1,12 @@
+import { cloneDeep } from 'lodash';
 import FallingPiece from './FallingPiece';
 import Stack from './Stack';
 import ShadowPiece from './ShadowPiece';
 import DatabaseService from '../utils/DatabaseService';
 import { gameOverMenu, pauseMenu, submitNewScore } from '../components/Menu';
-import { createPieceMatrix, get } from '../utils';
-import { COLORS } from '../utils/constants'
+import { createPieceMatrix, get, iterMatrix } from '../utils';
+import { COLORS } from '../utils/constants';
 import Piece from './Piece';
-import {cloneDeep} from 'lodash'
 
 class Game {
   canvas: HTMLCanvasElement;
@@ -52,7 +52,7 @@ class Game {
 
     this.holdPieceCanvas = get<HTMLCanvasElement>('#hold');
     this.holdPieceCtx = this.holdPieceCanvas.getContext('2d')!;
-    
+
     this.canHold = true;
     this.isGamePaused = false;
 
@@ -87,13 +87,23 @@ class Game {
 
   dropHandler() {
     if (this.activePiece.softDrop()) {
-      this.stack.merge(this.activePiece);
+      this.stack.merge(
+        this.activePiece.matrix,
+        this.activePiece.offsetY,
+        this.activePiece.offsetX,
+      );
 
-      this.activePiece.updatePiece(this.waitingPiece)
-      this.waitingPiece = Piece.createRandomPiece()
+      this.activePiece.updatePiece(this.waitingPiece);
+      this.waitingPiece = Piece.createRandomPiece();
 
       this.updateScore(this.stack.removeLines());
-      if (this.stack.stackCollision(this.activePiece.matrix, this.activePiece.offsetY, this.activePiece.offsetX)) {
+      if (
+        this.stack.stackCollision(
+          this.activePiece.matrix,
+          this.activePiece.offsetY,
+          this.activePiece.offsetX,
+        )
+      ) {
         this.gameover();
       }
       this.canHold = true;
@@ -111,11 +121,8 @@ class Game {
       this.waitingPieceCanvas.width,
       this.waitingPieceCanvas.height,
     );
-    if (this.waitingPiece.pieceType === null) {
-      console.log('null 1')
-    } 
     const temp = createPieceMatrix(this.waitingPiece.pieceType!);
-    this.drawMatrix(temp, (y, x) => {
+    iterMatrix(temp, (y, x) => {
       this.waitingPieceCtx.fillStyle = COLORS[this.waitingPiece.matrix[y][x] - 1];
       this.waitingPieceCtx.fillRect(x + 2.5, y + 2, 1, 1);
     });
@@ -128,13 +135,10 @@ class Game {
       this.holdPieceCanvas.width,
       this.holdPieceCanvas.height,
     );
-    if (this.holdPiece && this.holdPiece.matrix) {
-      if (this.holdPiece.pieceType === null) {
-        console.log('null 2')
-      }
-      const temp = createPieceMatrix(this.holdPiece.pieceType!)
-      this.drawMatrix(temp, (y, x) => {
-        this.holdPieceCtx.fillStyle = COLORS[this.holdPiece!.matrix[y][x] - 1];
+    if (this.holdPiece) {
+      const temp2 = createPieceMatrix(this.holdPiece.pieceType!);
+      iterMatrix(temp2, (y, x) => {
+        this.holdPieceCtx.fillStyle = COLORS[temp2[y][x] - 1];
         this.holdPieceCtx.fillRect(x + 2.5, y + 2, 1, 1);
       });
     }
@@ -144,14 +148,14 @@ class Game {
     this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
     // shadow
-    this.drawMatrix(this.shadowPiece.matrix, (y, x) => {
+    iterMatrix(this.shadowPiece.matrix, (y, x) => {
       const { offsetY, offsetX } = this.shadowPiece;
       this.ctx.clearRect(x + offsetX, y + offsetY, 1, 1);
       this.ctx.rect(x + offsetX, y + offsetY, 1, 1);
     });
 
     // stack
-    this.drawMatrix(this.stack.matrix, (y, x) => {
+    iterMatrix(this.stack.matrix, (y, x) => {
       const { matrix } = this.stack;
 
       this.ctx.fillStyle = COLORS[matrix[y][x] - 1];
@@ -163,7 +167,7 @@ class Game {
     });
 
     // activePiece
-    this.drawMatrix(this.activePiece.matrix, (y, x) => {
+    iterMatrix(this.activePiece.matrix, (y, x) => {
       const { matrix, offsetY, offsetX } = this.activePiece;
 
       this.ctx.fillStyle = COLORS[matrix[y][x] - 1];
@@ -173,16 +177,6 @@ class Game {
       this.ctx.strokeStyle = 'black';
       this.ctx.strokeRect(x + offsetX, y + offsetY, 1, 1);
     });
-  }
-
-  drawMatrix(matrix: number[][], stylingCallback: (y: number, x: number) => void): void {
-    for (let y = 0; y < matrix.length; y += 1) {
-      for (let x = 0; x < matrix[y].length; x += 1) {
-        if (matrix[y][x] !== 0) {
-          stylingCallback(y, x);
-        }
-      }
-    }
   }
 
   setEvents(): void {
@@ -207,18 +201,18 @@ class Game {
       } else if (event.key === 'Shift') {
         if (this.holdPiece === null) {
           // hold = active, active = next, next = new
-          this.holdPiece = new Piece()
-          this.holdPiece.updatePiece(this.activePiece)
-          this.activePiece.updatePiece(this.waitingPiece)
-          this.waitingPiece = Piece.createRandomPiece()
+          this.holdPiece = new Piece();
+          this.holdPiece.updatePiece(this.activePiece);
+          this.activePiece.updatePiece(this.waitingPiece);
+          this.waitingPiece = Piece.createRandomPiece();
         } else if (this.canHold) {
           // holdPiece <-> activePiece
-          const temp = cloneDeep(this.holdPiece)
-          this.holdPiece.updatePiece(this.activePiece)
-          this.activePiece.updatePiece(temp)
+          const temp = cloneDeep(this.holdPiece);
+          this.holdPiece.updatePiece(this.activePiece);
+          this.activePiece.updatePiece(temp);
         }
         this.shadowPiece.drop(this.activePiece);
-        this.canHold = false
+        this.canHold = false;
       } else if (event.key === 'Escape') {
         this.toggleGamePause();
         pauseMenu(this.isGamePaused);

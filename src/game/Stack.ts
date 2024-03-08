@@ -1,5 +1,3 @@
-import FallingPiece from './FallingPiece';
-
 /**
  * the stack of tetris pieces made by player
  */
@@ -68,9 +66,7 @@ class Stack {
   }
 
   // merge stackMatrix & pieceMatrix
-  merge(activePiece: FallingPiece) {
-    const { matrix, offsetY, offsetX } = activePiece;
-
+  merge(matrix: number[][], offsetY: number, offsetX: number) {
     for (let y = 0; y < matrix.length; y += 1) {
       for (let x = 0; x < matrix[y].length; x += 1) {
         if (y + offsetY < this.matrix.length && matrix[y][x] !== 0) {

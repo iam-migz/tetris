@@ -6,7 +6,9 @@ import Stack from './Stack';
  */
 class FallingPiece extends Piece {
   offsetY: number;
+
   offsetX: number;
+
   constructor(public stack: Stack) {
     super();
     this.offsetY = 0;
@@ -114,7 +116,7 @@ class FallingPiece extends Piece {
   }
 
   /**
-   * 
+   *
    * method override
    */
   updatePiece(piece: Piece) {
@@ -122,7 +124,6 @@ class FallingPiece extends Piece {
     this.offsetY = 0;
     this.offsetX = 12 / 2 - 2;
   }
-
 }
 
 export default FallingPiece;

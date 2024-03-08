@@ -1,4 +1,3 @@
-import Piece from '../game/Piece';
 import Stack from '../game/Stack';
 
 describe('Stack', () => {

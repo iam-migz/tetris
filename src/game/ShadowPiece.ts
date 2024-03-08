@@ -4,7 +4,9 @@ import Stack from './Stack';
 
 class ShadowPiece extends Piece {
   offsetY: number;
+
   offsetX: number;
+
   constructor(public stack: Stack) {
     super();
     this.offsetY = 0;
