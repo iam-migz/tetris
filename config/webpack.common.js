@@ -1,4 +1,5 @@
 const path = require('path')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
 
 module.exports = {
   entry: path.resolve(__dirname, '..', 'src', 'index.ts'),
@@ -24,4 +25,11 @@ module.exports = {
   resolve: {
     extensions: ['.ts', '.js', '.css']
   },
+  plugins: [
+    new HtmlWebpackPlugin({
+      filename: 'index.html',
+      title: 'Tetris',
+      favicon: path.resolve(__dirname, '..', 'public', 'favicon.png')
+    })
+  ]
 }
