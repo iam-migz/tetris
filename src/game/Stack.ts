@@ -1,43 +1,80 @@
+/**
+ * the stack of tetris pieces made by player
+ */
 class Stack {
-	stackMatrix: number[][];
-	constructor() {
-		this.stackMatrix = this.createMatrix(10, 20);
-	}
-	emptyStack() {
-		this.stackMatrix.forEach((row) => row.fill(0));
-	}
-	removeLines() {
-		let removedCount = 0;
-		let lineComplete = true;
-		let y = this.stackMatrix.length - 1;
-		while (y >= 0) {
-			for (let x = 0; x < this.stackMatrix[y].length; x++) {
-				// find a completed line
-				if (this.stackMatrix[y][x] === 0) {
-					lineComplete = false;
-				}
-			}
-			if (lineComplete === true) {
-				// shift everything down starting from index y to cover a single completed line
-				removedCount++;
-				for (let i = y; i > 0; i--) {
-					this.stackMatrix[i] = [...this.stackMatrix[i - 1]];
-				}
-			} else {
-				y--;
-				lineComplete = true;
-			}
-		}
-		return removedCount;
-	}
+  matrix: number[][];
 
-	createMatrix(sizeX: number, sizeY: number): number[][] {
-		const matrix: number[][] = [];
-		for (let i = 0; i < sizeY; i++) {
-			matrix.push(new Array(sizeX).fill(0));
-		}
-		return matrix;
-	}
+  constructor() {
+    this.matrix = [[]];
+    this.createMatrix(20, 10);
+  }
+
+  createMatrix = (rows: number, cols: number) => {
+    this.matrix = Array.from({ length: rows }, () => new Array(cols).fill(0));
+  };
+
+  emptyStack() {
+    this.matrix.forEach((row) => row.fill(0));
+  }
+
+  removeLines() {
+    let removedCount = 0;
+    let lineComplete = true;
+    let y = this.matrix.length - 1;
+    while (y >= 0) {
+      for (let x = 0; x < this.matrix[y].length; x += 1) {
+        // find a completed line
+        if (this.matrix[y][x] === 0) {
+          lineComplete = false;
+        }
+      }
+      if (lineComplete === true) {
+        // shift everything down starting from index y to remove completed lines
+        removedCount += 1;
+        for (let i = y; i > 0; i -= 1) {
+          this.matrix[i] = [...this.matrix[i - 1]];
+        }
+      } else {
+        y -= 1;
+        lineComplete = true;
+      }
+    }
+    return removedCount;
+  }
+
+  // returns true if we're in a collision with the bottom wall or the current stack
+  stackCollision(matrix: number[][], offsetY: number, offsetX: number) {
+    for (let y = 0; y < matrix.length; y += 1) {
+      for (let x = 0; x < matrix[y].length; x += 1) {
+        if (matrix[y][x] !== 0) {
+          const realx = offsetX + x;
+          const realy = offsetY + y;
+
+          // check if we are colliding with the bottom wall
+          if (realy >= this.matrix.length) {
+            return true;
+          }
+
+          // check if we are colliding with the existing stack
+          if (this.matrix[realy][realx] !== 0) {
+            return true;
+          }
+        }
+      }
+    }
+    return false;
+  }
+
+  // merge stackMatrix & pieceMatrix
+  merge(matrix: number[][], offsetY: number, offsetX: number) {
+    for (let y = 0; y < matrix.length; y += 1) {
+      for (let x = 0; x < matrix[y].length; x += 1) {
+        if (y + offsetY < this.matrix.length && matrix[y][x] !== 0) {
+          this.matrix[y + offsetY][x + offsetX] = matrix[y][x];
+        }
+      }
+    }
+  }
 }
 
 export default Stack;

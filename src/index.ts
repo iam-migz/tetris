@@ -1,8 +1,21 @@
-import Home from './pages/Home';
-import { create } from './helpers';
-import DatabaseService from "./game/DatabaseService";
+import './styles/index.module.css';
+import { create, get } from './utils';
+import Canvas from './components/Canvas';
+import Highscores from './components/Highscores';
+import Menu from './components/Menu';
+import Game from './game/Game';
 
-export const databaseService = new DatabaseService()
+document.body.appendChild(create('div', { id: 'root' }));
+const root = get('#root');
+root.appendChild(Canvas());
+root.appendChild(Highscores());
+root.appendChild(Menu());
 
-document.body.appendChild(create('div', { id: 'root' }))
-Home()
+const game = new Game();
+const start = get('#start');
+const menu = get('#menu');
+
+start.addEventListener('click', () => {
+  menu.style.display = 'none';
+  game.animate();
+});
