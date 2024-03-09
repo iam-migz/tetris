@@ -125,6 +125,9 @@ class Game {
     iterMatrix(temp, (y, x) => {
       this.waitingPieceCtx.fillStyle = COLORS[this.waitingPiece.matrix[y][x] - 1];
       this.waitingPieceCtx.fillRect(x + 2.5, y + 2, 1, 1);
+      this.waitingPieceCtx.lineWidth = 0.1;
+      this.waitingPieceCtx.strokeStyle = 'black';
+      this.waitingPieceCtx.strokeRect(x + 2.5, y + 2, 1, 1);
     });
 
     // hold piece
@@ -140,6 +143,9 @@ class Game {
       iterMatrix(temp2, (y, x) => {
         this.holdPieceCtx.fillStyle = COLORS[temp2[y][x] - 1];
         this.holdPieceCtx.fillRect(x + 2.5, y + 2, 1, 1);
+        this.holdPieceCtx.lineWidth = 0.1;
+        this.holdPieceCtx.strokeStyle = 'black';
+        this.holdPieceCtx.strokeRect(x + 2.5, y + 2, 1, 1);
       });
     }
 
