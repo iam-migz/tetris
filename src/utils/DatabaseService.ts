@@ -58,8 +58,8 @@ class DatabaseService {
           title: 'Error getting highscores',
           text: error.message,
           icon: 'error',
-          confirmButtonText: 'Cool'
-        })
+          confirmButtonText: 'Cool',
+        });
       }
       throw error;
     }
@@ -81,8 +81,8 @@ class DatabaseService {
           title: 'Error saving highscore',
           text: error.message,
           icon: 'error',
-          confirmButtonText: 'Cool'
-        })
+          confirmButtonText: 'Cool',
+        });
       }
       throw error;
     }

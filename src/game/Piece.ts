@@ -22,7 +22,7 @@ class Piece {
   }
 
   static createRandomPiece() {
-    shuffle(PieceTypeArray)
+    shuffle(PieceTypeArray);
     const rand = random(0, PieceTypeArray.length - 1, false);
     const piece = new Piece();
     piece.pieceType = PieceTypeArray[rand];
