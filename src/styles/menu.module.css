@@ -5,7 +5,6 @@
 	height: 100vh;
 	text-align: center;
 	background-color: rgba(1, 1, 1, 0.5);
-  /* background: linear-gradient(109.6deg, rgb(0, 0, 0) 11.2%, rgb(11, 132, 145) 91.1%); */
 }
 
 .content {
@@ -15,7 +14,6 @@
 	margin-top: 15em;
 	padding: 1em;
 	border-radius: 5px;
-	/* box-shadow: 0 0 15px 7px #fff, 0 0 25px 15px #f0f, 0 0 35px 20px #0ff; */
   box-shadow: 0 -2px 15px rgb(96, 232, 78);
 }
 

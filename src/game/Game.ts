@@ -187,11 +187,11 @@ class Game {
 
   setEvents(): void {
     document.addEventListener('visibilitychange', () => {
-        if (document.hidden) {
-          this.toggleGamePause();
-          pauseMenu(this.isGamePaused);
-        }
-    })
+      if (document.hidden) {
+        this.toggleGamePause();
+        pauseMenu(this.isGamePaused);
+      }
+    });
 
     document.addEventListener('keydown', (event) => {
       if (this.isGamePaused === true && event.key !== 'Escape') {
