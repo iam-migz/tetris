@@ -241,10 +241,13 @@ class Game {
     submitScoreButton.addEventListener('click', () => {
       submitNewScore(this.score);
     });
+
+    // restart or play again
     restartButton.addEventListener('click', () => {
       this.stack.emptyStack();
       this.updateScore(-1);
       this.toggleGamePause();
+      this.holdPiece = null;
       get('#menu').style.display = 'none';
     });
   }

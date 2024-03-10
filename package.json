@@ -43,6 +43,7 @@
   "dependencies": {
     "date-fns": "^2.29.2",
     "firebase": "^9.9.2",
-    "lodash": "^4.17.21"
+    "lodash": "^4.17.21",
+    "sweetalert2": "^11.6.13"
   }
 }

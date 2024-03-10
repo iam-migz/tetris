@@ -18,3 +18,9 @@
 	font-size: 0.8em;
 	color: gray;
 }
+
+@media (max-width: 1220px) {
+  .highscores {
+    display: none;
+  }
+}
