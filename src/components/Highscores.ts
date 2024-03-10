@@ -4,14 +4,18 @@ import s from '../styles/highscores.module.css';
 import DatabaseService, { mockData } from '../utils/DatabaseService';
 
 export const renderTopScores = async (parent?: HTMLElement) => {
-  // const scores = await DatabaseService.fetchHighScores();
-  const scores = await mockData();
+  const scores = await DatabaseService.fetchHighScores();
+  // const scores = await mockData();
 
   const scoresList = get<HTMLUListElement>('#scores-list', parent);
   scoresList.innerHTML = '';
   scores.forEach((score, index) => {
     const li = create('li');
-    li.innerHTML = `${index + 1}. ${score.name}: ${score.score} <span class="${s.date}">${score.createdAt}</span>`;
+    li.innerHTML = /* HTML */`
+      <span class="${s.small}">${index + 1}.</span> 
+      ${score.name}: <span class="${s.score}">${score.score}</span>
+      <span class="${s.date}">${score.createdAt}</span>
+    `;
     scoresList.appendChild(li);
   });
 };

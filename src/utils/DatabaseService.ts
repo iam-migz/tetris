@@ -4,6 +4,7 @@ import {
   getFirestore, collection, query, where, orderBy, limit,
   getDocs, CollectionReference, Timestamp, Firestore, addDoc, serverTimestamp, deleteDoc, doc,
 } from 'firebase/firestore';
+import Swal from 'sweetalert2';
 
 type HighScoresType = {
   id: string;
@@ -52,7 +53,14 @@ class DatabaseService {
       });
       return highscores;
     } catch (error) {
-      console.error('Error getting highscores:', error);
+      if (error instanceof Error) {
+        Swal.fire({
+          title: 'Error getting highscores',
+          text: error.message,
+          icon: 'error',
+          confirmButtonText: 'Cool'
+        })
+      }
       throw error;
     }
   }
@@ -68,7 +76,15 @@ class DatabaseService {
         await deleteDoc(docRef);
       }
     } catch (error) {
-      console.error('Error:', error);
+      if (error instanceof Error) {
+        Swal.fire({
+          title: 'Error saving highscore',
+          text: error.message,
+          icon: 'error',
+          confirmButtonText: 'Cool'
+        })
+      }
+      throw error;
     }
   }
 }
