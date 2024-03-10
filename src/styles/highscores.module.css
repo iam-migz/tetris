@@ -3,20 +3,27 @@
 	top: 0;
 	right: 0;
 	min-width: 240px;
-	background: #80808030;
 	padding: 1em;
 	border-radius: 5px;
 	color: white;
 }
 
 .highscores h3 {
-	text-align: center;
-	padding-bottom: 1em;
+  padding: 4px;
 }
 
 .date {
 	font-size: 0.8em;
 	color: gray;
+}
+
+.small {
+  font-size: 0.8em;
+  color: gray;
+}
+
+.score {
+  color: darkgoldenrod;
 }
 
 @media (max-width: 1220px) {

@@ -5,16 +5,14 @@
 
 canvas {
 	border-radius: 5px;
-	-webkit-border-radius: 5px;
-	-moz-border-radius: 5px;
-	-ms-border-radius: 5px;
-	-o-border-radius: 5px;
 }
 
 body {
-	background: #202028;
+  background: linear-gradient(112.1deg, rgb(32, 38, 57) 11.4%, rgb(63, 76, 119) 70.2%);
 	color: #fff;
 	font-family: sans-serif;
+  height: 100vh;
+  overflow-y: hidden;
 }
 
 li {

@@ -13,7 +13,11 @@
 	justify-content: space-between;
 }
 
+canvas {
+  border: solid 0.2em #fff;
+  background: rgb(18, 18, 18);
+}
+
 .tetris {
-	border: solid 0.2em #fff;
 	height: 80vh;
 }

@@ -1,4 +1,4 @@
-import { random } from 'lodash';
+import { random, shuffle } from 'lodash';
 import { PieceType, PieceTypeArray } from '../utils/constants';
 import { createPieceMatrix } from '../utils';
 
@@ -22,6 +22,7 @@ class Piece {
   }
 
   static createRandomPiece() {
+    shuffle(PieceTypeArray)
     const rand = random(0, PieceTypeArray.length - 1, false);
     const piece = new Piece();
     piece.pieceType = PieceTypeArray[rand];

@@ -37,7 +37,7 @@ class Game {
 
   lastTime: number;
 
-  dropCounter: number;
+  loopCounter: number;
 
   dropInterval: number;
 
@@ -68,7 +68,7 @@ class Game {
 
     this.holdPiece = null;
     this.lastTime = 0;
-    this.dropCounter = 0;
+    this.loopCounter = 0;
     this.dropInterval = 1000;
     this.setEvents();
   }
@@ -77,8 +77,8 @@ class Game {
     if (this.isGamePaused === true) return;
     const deltaTime = time - this.lastTime;
     this.lastTime = time;
-    this.dropCounter += deltaTime;
-    if (this.dropCounter > this.dropInterval) {
+    this.loopCounter += deltaTime;
+    if (this.loopCounter > this.dropInterval) {
       this.dropHandler();
     }
     this.draw();
@@ -109,7 +109,7 @@ class Game {
       this.canHold = true;
     }
     this.shadowPiece.drop(this.activePiece);
-    this.dropCounter = 0;
+    this.loopCounter = 0;
   }
 
   draw(): void {
@@ -186,21 +186,28 @@ class Game {
   }
 
   setEvents(): void {
+    document.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
+          this.toggleGamePause();
+          pauseMenu(this.isGamePaused);
+        }
+    })
+
     document.addEventListener('keydown', (event) => {
       if (this.isGamePaused === true && event.key !== 'Escape') {
         return;
       }
-      if (event.key === 'ArrowDown') {
+      if (event.key === 'Escape') {
+        this.toggleGamePause();
+        pauseMenu(this.isGamePaused);
+      } else if (event.key === 'ArrowDown') {
         this.dropHandler();
       } else if (event.key === 'ArrowLeft') {
         this.activePiece.goLeft();
-        this.shadowPiece.drop(this.activePiece);
       } else if (event.key === 'ArrowRight') {
         this.activePiece.goRight();
-        this.shadowPiece.drop(this.activePiece);
       } else if (event.key === 'ArrowUp') {
         this.activePiece.rotateRight();
-        this.shadowPiece.drop(this.activePiece);
       } else if (event.key === ' ') {
         this.activePiece.hardDrop(this.shadowPiece.offsetY);
         this.dropHandler();
@@ -217,12 +224,9 @@ class Game {
           this.holdPiece.updatePiece(this.activePiece);
           this.activePiece.updatePiece(temp);
         }
-        this.shadowPiece.drop(this.activePiece);
         this.canHold = false;
-      } else if (event.key === 'Escape') {
-        this.toggleGamePause();
-        pauseMenu(this.isGamePaused);
       }
+      this.shadowPiece.drop(this.activePiece);
     });
 
     const playButton = get('#play');
